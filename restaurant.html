@@ -55,58 +55,60 @@
         <div class="form-header">Leave a review</div>
         <div class="form-group">
           <label for="name">Name</label>
-          <input type="text" name="" id="name" class="form-name">
+          <input type="text" name="" id="name" class="form-name" required>
         </div>
         <div class="form-group">
           <label for="comment">Comment</label>
-          <textarea id="comment" class="form-comment"></textarea>
+          <textarea id="comment" class="form-comment" required></textarea>
         </div>
         <div class="form-group">
           <label>Ratings</label>
           <div class="form-stars">
             <div class="rate">
-              <input type="radio" id="star5" name="rate" value="5" />
-              <label for="star5" title="text">5 stars</label>
-              <input type="radio" id="star4" name="rate" value="4" />
-              <label for="star4" title="text">4 stars</label>
-              <input type="radio" id="star3" name="rate" value="3" />
-              <label for="star3" title="text">3 stars</label>
-              <input type="radio" id="star2" name="rate" value="2" checked/>
-              <label for="star2" title="text">2 stars</label>
-              <input type="radio" id="star1" name="rate" value="1" />
-              <label for="star1" title="text">1 star</label>
+              <label class="required-hide">
+                <input type="radio" name="rate" required/>
+              </label>
+              <input type="radio" id="star5" name="rate" value="5"/>
+              <label for="star5" title="5 stars">5 stars</label>
+              <input type="radio" id="star4" name="rate" value="4"/>
+              <label for="star4" title="4 stars">4 stars</label>
+              <input type="radio" id="star3" name="rate" value="3"/>
+              <label for="star3" title="3 stars">3 stars</label>
+              <input type="radio" id="star2" name="rate" value="2"/>
+              <label for="star2" title="2 stars">2 stars</label>
+              <input type="radio" id="star1" name="rate" value="1"/>
+              <label for="star1" title="1 stars">1 star</label>
             </div>
           </div>
         </div>
         <div class="form-group">
-          <div class="form-submit">Submit</div>
+        <button class="form-submit">Submit</button>
         </div>
       </form>
       <section id="reviews-container">
+        <h2>Reviews</h2>
         <ul id="reviews-list">
-          <li class="reviewer">
-            <div class="reviewer-details">
-              <div class="reviewer-name">John Doe</div>
-              <div class="reviewer-stars">
-              <div class="rate">
-                <input type="radio" id="star5" name="rate" value="5" />
-                <label for="star5" title="text">5 stars</label>
-                <input type="radio" id="star4" name="rate" value="4" />
-                <label for="star4" title="text">4 stars</label>
-                <input type="radio" id="star3" name="rate" value="3" />
-                <label for="star3" title="text">3 stars</label>
-                <input type="radio" id="star2" name="rate" value="2" checked/>
-                <label for="star2" title="text">2 stars</label>
-                <input type="radio" id="star1" name="rate" value="1" />
-                <label for="star1" title="text">1 star</label>
-              </div>
-            </div>
-            </div>
-            <hr class="reviewer-hr">
-            <div class="reviewer-comment">
-              Lorem ipsum dolor sit amet consectetur adipisicing elit. Perferendis, totam quisquam ea quam, dicta minus voluptates sed, ipsa alias in aliquam adipisci dolor vero doloribus! Dolorum cum fugiat eligendi ipsa.
-            </div>
-          </li>
+            <li class="reviewer">
+                <div class="reviewer-details">
+                  <div class="reviewer-name">John doe <span class="delete-post" data-postid="31" title="Delete"><img src="/images/icons/delete.svg" alt="Delete"></span></div>
+                  <div class="reviewer-stars">
+                  <div class="rate">
+                    <input type="radio" id="star5" name="rate${counter}" value="5"/>
+                    <label for="star5" title="text">5 stars</label>
+                    <input type="radio" id="star4" name="rate${counter}" value="4"/>
+                    <label for="star4" title="text">4 stars</label>
+                    <input type="radio" id="star3" name="rate${counter}" value="3"/>
+                    <label for="star3" title="text">3 stars</label>
+                    <input type="radio" id="star2" name="rate${counter}" value="2"/>
+                    <label for="star2" title="text">2 stars</label>
+                    <input type="radio" id="star1" name="rate${counter}" value="1"/>
+                    <label for="star1" title="text">1 star</label>
+                  </div>
+                </div>
+                </div>
+                <hr class="reviewer-hr">
+                <div class="reviewer-comment">Lorem ipsum dolor sit amet consectetur adipisicing elit. Explicabo accusantium corrupti numquam ducimus totam debitis minus, aliquam ut reiciendis obcaecati mollitia architecto provident quibusdam doloribus perspiciatis, suscipit, quaerat distinctio ratione!</div>
+              </li>
         </ul>
       </section>
     </section>

@@ -1,6 +1,8 @@
 let restaurant;
 var newMap;
 
+// let DBurl = 'http://localhost:1337';
+let DBurl = 'http://penguin.linux.test:1337';
 /**
  * Initialize map as soon as the page is loaded.
  */
@@ -136,22 +138,60 @@ fillRestaurantHoursHTML = (
  * Create all reviews HTML and add them to the webpage.
  */
 fillReviewsHTML = (reviews = self.restaurant.reviews) => {
-  const container = document.getElementById("reviews-container");
-  const title = document.createElement("h2");
-  title.innerHTML = "Reviews";
-  container.appendChild(title);
-
-  if (!reviews) {
-    const noReviews = document.createElement("p");
-    noReviews.innerHTML = "No reviews yet!";
-    container.appendChild(noReviews);
-    return;
-  }
-  const ul = document.getElementById("reviews-list");
-  reviews.forEach(review => {
-    ul.appendChild(createReviewHTML(review));
+  fetch(`${DBurl}/reviews/?restaurant_id=${getParameterByName("id")}`)
+  .then(function(response) {
+    return response.json();
+  })
+  .then(function(myJson) {
+    console.log(myJson);
+    renderReviews(myJson)
   });
-  container.appendChild(ul);
+  function renderReviews(allReviews) {
+    if(allReviews) {
+      let reviewTemplate = '', counter = 1;
+      
+      allReviews.forEach(review => {
+        let name = review.name,
+        comments = review.comments,
+        ratings = review.rating,
+        id = review.id;
+        reviewTemplate += `
+        <li class="reviewer">
+          <div class="reviewer-details">
+            <div class="reviewer-name">${name}
+              <span class="delete-post" data-postid="${id}" title="Delete"><img src="/images/icons/delete.svg" alt="Delete"></span>
+            </div>
+            <div class="reviewer-stars">
+            <div class="rate">
+              <input type="radio" id="star5" name="rate${counter}" value="5" ${(() => {if(ratings == 5) return 'checked'})()}/>
+              <label for="star5" title="text">5 stars</label>
+              <input type="radio" id="star4" name="rate${counter}" value="4" ${(() => {if(ratings == 4) return 'checked'})()}/>
+              <label for="star4" title="text">4 stars</label>
+              <input type="radio" id="star3" name="rate${counter}" value="3" ${(() => {if(ratings == 3) return 'checked'})()}/>
+              <label for="star3" title="text">3 stars</label>
+              <input type="radio" id="star2" name="rate${counter}" value="2" ${(() => {if(ratings == 2) return 'checked'})()}/>
+              <label for="star2" title="text">2 stars</label>
+              <input type="radio" id="star1" name="rate${counter}" value="1" ${(() => {if(ratings == 1) return 'checked'})()}/>
+              <label for="star1" title="text">1 star</label>
+            </div>
+          </div>
+          </div>
+          <hr class="reviewer-hr">
+          <div class="reviewer-comment">${comments}</div>
+        </li>
+        `;
+        counter++;
+      })
+      document.getElementById("reviews-list").innerHTML += reviewTemplate;
+      enableDeletePost();
+    } else {
+      const container = document.getElementById("reviews-container");
+      const noReviews = document.createElement("p");
+      noReviews.innerHTML = "No reviews yet!";
+      container.appendChild(noReviews);
+      return;
+    }
+  }
 };
 
 /**
@@ -231,3 +271,65 @@ document.addEventListener("DOMContentLoaded", () => {
     // })
   }, 5000);
 });
+
+let submitFormBtn = document.querySelector('.form-submit');
+submitFormBtn.addEventListener('click', (e) => {
+  // e.preventDefault();
+ let reviewer_name =  document.querySelector('.form-name').value,
+ comment_text = document.querySelector('.form-comment').value,
+ rating = document.querySelector('.form-stars input:checked').value;
+
+  let reviewObj = {
+    restaurant_id: getParameterByName("id"),
+    name: reviewer_name,
+    rating: rating,
+    comments: comment_text
+  }
+  console.log(reviewObj)
+  postData(`${DBurl}/reviews/`, 'POST', reviewObj)
+})
+function postData(url, method, data) {
+  fetch(url, {
+    method: method,
+    body: JSON.stringify(data)
+  })
+    .then(function(response) {
+      // console.log(response)
+      return response.json();
+    })
+    .then(function(myJson) {
+      console.log(JSON.stringify(myJson));
+      console.log(myJson);
+      // location.reload()
+      // return JSON.stringify(myJson);
+    })
+    .catch(error => {
+      console.log(error)
+    });
+}
+
+function enableDeletePost() {
+  let deletePostBtns = document.querySelectorAll('.delete-post')
+  deletePostBtns.forEach(deletePostBtn => {
+    deletePostBtn.addEventListener('click', () => {
+      console.log('clicked')
+      let postId = deletePostBtn.getAttribute('data-postid')
+      fetch(`${DBurl}/reviews/${postId}`, {
+        method: 'DELETE'
+      })
+      .then(function(response) {
+        console.log(response)
+        return response.json();
+      })
+      .then(function(myJson) {
+        console.log(JSON.stringify(myJson));
+        console.log(myJson);
+        // location.reload()
+        // return JSON.stringify(myJson);
+      })
+      .catch(error => {
+        console.log(error)
+      });
+    })
+  })
+}

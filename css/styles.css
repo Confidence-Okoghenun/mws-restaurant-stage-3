@@ -333,11 +333,21 @@ nav h1 a {
   width: 75%;
 }
 .form-stars .rate {
+  position: relative;
+}
+.form-stars .rate .required-hide{
+  opacity: 0;
+  right: 45%;
+  z-index: -1;
+  position: absolute;
+}
+.form-stars .rate {
   display: flex;
   align-items: center;
   flex-direction: row-reverse;
 }
 .form-submit {
+  all: unset;
   color: white;
   font-size: 0.9em;
   padding: 6px 10px;
@@ -359,6 +369,16 @@ nav h1 a {
 }
 .reviewer .reviewer-name {
   font-weight: bold;
+}
+.reviewer-name .delete-post {
+  cursor: pointer;
+  filter: grayscale(100%);
+}
+.reviewer-name .delete-post:hover {
+  filter: grayscale(0);
+}
+.reviewer-name .delete-post img {
+  width: 14px;
 }
 .reviewer .reviewer-stars {
   pointer-events: none;
