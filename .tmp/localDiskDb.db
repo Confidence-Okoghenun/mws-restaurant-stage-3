@@ -21,9 +21,9 @@
           "Sunday": "12:00 pm - 4:00 pm, 5:30 pm - 11:00 pm"
         },
         "createdAt": 1504095563444,
-        "updatedAt": "2017-09-14T14:01:27.653Z",
+        "updatedAt": "2018-12-02T01:59:34.311Z",
         "id": 1,
-        "is_favorite": false
+        "is_favorite": "true"
       },
       {
         "name": "Emily",
@@ -45,8 +45,8 @@
           "Sunday": "12:00 pm - 3:00 pm, 5:00 pm - 11:00 pm"
         },
         "createdAt": 1504095568414,
-        "updatedAt": "2017-09-14T14:05:54.800Z",
-        "is_favorite": false,
+        "updatedAt": "2018-12-02T01:58:36.210Z",
+        "is_favorite": "true",
         "id": 2
       },
       {
@@ -92,8 +92,8 @@
           "Sunday": "Sat - 10:30 pm"
         },
         "createdAt": 1504095567091,
-        "updatedAt": 1504095567091,
-        "is_favorite": false,
+        "updatedAt": "2018-12-02T01:42:31.324Z",
+        "is_favorite": "false",
         "id": 4
       },
       {
@@ -116,8 +116,8 @@
           "Sunday": "10:00 am - 12:00 am"
         },
         "createdAt": 1504095567071,
-        "updatedAt": 1504095567071,
-        "is_favorite": false,
+        "updatedAt": "2018-12-02T01:40:01.459Z",
+        "is_favorite": "true",
         "id": 5
       },
       {
@@ -164,8 +164,8 @@
           "Sunday": "11:30 am - 10:00 pm"
         },
         "createdAt": 1504095567091,
-        "updatedAt": 1504095567091,
-        "is_favorite": false,
+        "updatedAt": "2018-12-02T02:02:12.423Z",
+        "is_favorite": "true",
         "id": 7
       },
       {
@@ -235,8 +235,8 @@
           "Sunday": "11:00 am - 12:00 am"
         },
         "createdAt": 1504095567183,
-        "updatedAt": 1504095567183,
-        "is_favorite": false,
+        "updatedAt": "2018-12-02T01:23:09.258Z",
+        "is_favorite": "true",
         "id": 10
       }
     ],
@@ -246,9 +246,9 @@
         "restaurant_id": 1,
         "name": "Steve",
         "createdAt": 1504095567183,
-        "updatedAt": 1504095567183,
-        "rating": 4,
-        "comments": "Mission Chinese Food has grown up from its scrappy Orchard Street days into a big, two story restaurant equipped with a pizza oven, a prime rib cart, and a much broader menu. Yes, it still has all the hits â€” the kung pao pastrami, the thrice cooked bacon â€”but chef/proprietor Danny Bowien and executive chef Angela Dimayuga have also added a raw bar, two generous family-style set menus, and showstoppers like duck baked in clay. And you can still get a lot of food without breaking the bank."
+        "updatedAt": "2018-12-01T22:50:01.633Z",
+        "rating": "4",
+        "comments": "Mission Chinese Food has grown up from its scrappy Orchard Street days into a big, two story restaurant equipped with a pizza oven, a prime rib cart, and a much broader menu. Yes, it still has all the hits the kung pao pastrami, the thrice cooked bacon but chef/proprietor Danny Bowien and executive chef Angela Dimayuga have also added a raw bar, two generous family-style set menus, and showstoppers like duck baked in clay. And you can still get a lot of food without breaking the bank."
       },
       {
         "id": 2,
@@ -526,8 +526,23 @@
         "rating": "5",
         "comments": "Mission Chinese Food has grown up from its scrappy Orchard Street days into a big, two story restaurant equipped with a pizza oven, a prime rib cart, and a much broader menu. Yes, it still has all the hits â€” the kung pao pastrami, the thrice cooked bacon â€”but chef/proprietor Danny Bowien and executive chef Angela Dimayuga have also added a raw bar, two generous family-style set menus, and showstoppers like duck baked in clay. And you can still get a lot of food without breaking the bank.",
         "createdAt": "2018-11-30T21:09:25.873Z",
-        "updatedAt": "2018-11-30T21:09:25.873Z",
+        "updatedAt": "2018-12-01T22:51:08.901Z",
         "id": 36
+      },
+      {
+        "restaurant_id": "1",
+        "name": "David Cameron",
+        "rating": "2",
+        "comments": "lorem pisum dola et lava. Ma soapona de sovar?",
+        "createdAt": "2018-12-01T22:51:55.372Z",
+        "updatedAt": "2018-12-01T22:51:55.372Z",
+        "id": 41
+      },
+      {
+        "rate": "3",
+        "createdAt": "2018-12-01T23:01:51.001Z",
+        "updatedAt": "2018-12-01T23:01:51.001Z",
+        "id": 49
       }
     ]
   },
@@ -583,7 +598,7 @@
       "id": 10
     },
     "reviews": {
-      "id": 39
+      "id": 49
     }
   }
 }

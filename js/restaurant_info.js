@@ -2,7 +2,7 @@ let restaurant;
 var newMap;
 
 // let DBurl = 'http://localhost:1337';
-let DBurl = 'http://penguin.linux.test:1337';
+// let DBurl = 'http://penguin.linux.test:1337';
 /**
  * Initialize map as soon as the page is loaded.
  */
@@ -91,7 +91,7 @@ fetchRestaurantFromURL = callback => {
  */
 fillRestaurantHTML = (restaurant = self.restaurant) => {
   const name = document.getElementById("restaurant-name");
-  name.innerHTML = restaurant.name;
+  name.innerHTML = `${restaurant.name} <img src="/images/icons/${(() => {if(restaurant.is_favorite == 'true'){return 'unfavorite'}else{return 'favorite'}})()}.svg" alt="Favorite" class="favorite-restaurant" title="Favorite" data-id="${restaurant.id}" style="filter: ${(() => {if(restaurant.is_favorite == 'true'){return 'grayscale(0)'}else{return 'grayscale(100%)'}})()}">`;
 
   const address = document.getElementById("restaurant-address");
   address.innerHTML = restaurant.address;
@@ -109,6 +109,7 @@ fillRestaurantHTML = (restaurant = self.restaurant) => {
     fillRestaurantHoursHTML();
   }
   // fill reviews
+  enableFavorite();
   fillReviewsHTML();
 };
 
@@ -139,40 +140,43 @@ fillRestaurantHoursHTML = (
  */
 fillReviewsHTML = (reviews = self.restaurant.reviews) => {
   fetch(`${DBurl}/reviews/?restaurant_id=${getParameterByName("id")}`)
-  .then(function(response) {
-    return response.json();
+  .then(response => response.json())
+  .then(restaurant => {
+    renderReviews(restaurant)
   })
-  .then(function(myJson) {
-    console.log(myJson);
-    renderReviews(myJson)
-  });
+  .catch(error => console.log(error));
+
   function renderReviews(allReviews) {
     if(allReviews) {
-      let reviewTemplate = '', counter = 1;
-      
+      let reviewTemplate = '';
       allReviews.forEach(review => {
-        let name = review.name,
+        let id = review.id,
+        name = review.name,
+        ratings = review.rating;
         comments = review.comments,
-        ratings = review.rating,
-        id = review.id;
+        
         reviewTemplate += `
         <li class="reviewer">
           <div class="reviewer-details">
-            <div class="reviewer-name">${name}
-              <span class="delete-post" data-postid="${id}" title="Delete"><img src="/images/icons/delete.svg" alt="Delete"></span>
+            <div class="reviewer-with-controls">
+              <div class="reviewer-name">${name}</div>
+              <div class="reviewer-controls">
+                <span class="delete-post" data-postid="${id}" title="Delete"><img src="/images/icons/delete.svg" alt="Delete"></span>
+                <span class="edit-post" data-postid="${id}" title="Edit"><img src="/images/icons/edit.svg" alt="Edit"></span>
+              </div>
             </div>
             <div class="reviewer-stars">
             <div class="rate">
-              <input type="radio" id="star5" name="rate${counter}" value="5" ${(() => {if(ratings == 5) return 'checked'})()}/>
-              <label for="star5" title="text">5 stars</label>
-              <input type="radio" id="star4" name="rate${counter}" value="4" ${(() => {if(ratings == 4) return 'checked'})()}/>
-              <label for="star4" title="text">4 stars</label>
-              <input type="radio" id="star3" name="rate${counter}" value="3" ${(() => {if(ratings == 3) return 'checked'})()}/>
-              <label for="star3" title="text">3 stars</label>
-              <input type="radio" id="star2" name="rate${counter}" value="2" ${(() => {if(ratings == 2) return 'checked'})()}/>
-              <label for="star2" title="text">2 stars</label>
-              <input type="radio" id="star1" name="rate${counter}" value="1" ${(() => {if(ratings == 1) return 'checked'})()}/>
-              <label for="star1" title="text">1 star</label>
+              <input type="radio" id="star${(() => id*5)()}" name="rate${id}" value="5" ${(() => {if(ratings == 5) return 'checked'})()}/>
+              <label for="star${(() => id*5)()}" title="text">5 stars</label>
+              <input type="radio" id="star${(() => id*4)()}" name="rate${id}" value="4" ${(() => {if(ratings == 4) return 'checked'})()}/>
+              <label for="star${(() => id*4)()}" title="text">4 stars</label>
+              <input type="radio" id="star${(() => id*3)()}" name="rate${id}" value="3" ${(() => {if(ratings == 3) return 'checked'})()}/>
+              <label for="star${(() => id*3)()}" title="text">3 stars</label>
+              <input type="radio" id="star${(() => id*2)()}" name="rate${id}" value="2" ${(() => {if(ratings == 2) return 'checked'})()}/>
+              <label for="star${(() => id*2)()}" title="text">2 stars</label>
+              <input type="radio" id="star${(() => id*1)()}" name="rate${id}" value="1" ${(() => {if(ratings == 1) return 'checked'})()}/>
+              <label for="star${(() => id*1)()}" title="text">1 star</label>
             </div>
           </div>
           </div>
@@ -180,10 +184,10 @@ fillReviewsHTML = (reviews = self.restaurant.reviews) => {
           <div class="reviewer-comment">${comments}</div>
         </li>
         `;
-        counter++;
       })
       document.getElementById("reviews-list").innerHTML += reviewTemplate;
       enableDeletePost();
+      enableUpdatePost();
     } else {
       const container = document.getElementById("reviews-container");
       const noReviews = document.createElement("p");
@@ -278,7 +282,7 @@ submitFormBtn.addEventListener('click', (e) => {
  let reviewer_name =  document.querySelector('.form-name').value,
  comment_text = document.querySelector('.form-comment').value,
  rating = document.querySelector('.form-stars input:checked').value;
-
+  // let thisLocation = location.href;
   let reviewObj = {
     restaurant_id: getParameterByName("id"),
     name: reviewer_name,
@@ -286,28 +290,18 @@ submitFormBtn.addEventListener('click', (e) => {
     comments: comment_text
   }
   console.log(reviewObj)
-  postData(`${DBurl}/reviews/`, 'POST', reviewObj)
-})
-function postData(url, method, data) {
-  fetch(url, {
-    method: method,
-    body: JSON.stringify(data)
+  fetch(`${DBurl}/reviews/`, {
+    method: 'POST',
+    body: JSON.stringify(reviewObj)
   })
-    .then(function(response) {
-      // console.log(response)
-      return response.json();
-    })
-    .then(function(myJson) {
-      console.log(JSON.stringify(myJson));
-      console.log(myJson);
-      // location.reload()
-      // return JSON.stringify(myJson);
-    })
-    .catch(error => {
-      console.log(error)
-    });
-}
-
+  .then(response =>response.json())
+  .then(myJson => location.reload())
+  .catch(error => console.log(error));
+  // location.href = thisLocation;
+})
+/**
+ * Enables post deletion
+ */
 function enableDeletePost() {
   let deletePostBtns = document.querySelectorAll('.delete-post')
   deletePostBtns.forEach(deletePostBtn => {
@@ -317,19 +311,91 @@ function enableDeletePost() {
       fetch(`${DBurl}/reviews/${postId}`, {
         method: 'DELETE'
       })
-      .then(function(response) {
-        console.log(response)
-        return response.json();
+      .then(response => response.json())
+      .then(myJson => location.reload())
+      .catch(error => console.log(error));
+    });
+  });
+}
+/**
+ * Enable updating posts
+ */
+function enableUpdatePost() {
+  let editPostBtns = document.querySelectorAll('.edit-post');
+  editPostBtns.forEach((editPostBtn, i) => {
+    editPostBtn.addEventListener('click', () => {
+      // let post = editPostBtn.parentElement.parentElement.parentElement;
+      let id = editPostBtn.getAttribute('data-postid'),
+      name = document.querySelectorAll('.reviewer-name')[i],
+      stars = document.querySelectorAll('.reviewer-stars')[i],
+      comments = document.querySelectorAll('.reviewer-comment')[i],
+      controls = document.querySelectorAll('.reviewer-controls')[i],
+      nameText = name.textContent,
+      commentText = comments.textContent;
+
+      name.style.width = 'fit-content';
+      stars.style.pointerEvents = 'unset';
+
+      name.innerHTML = `<input type="text" name="" id="name" class="update-name" placeholder="${nameText}" data-oldname="${nameText}">`;
+      comments.innerHTML = `<textarea id="comment" style="height: ${comments.clientHeight}px" class="update-comment" data-oldcomment="${commentText}">${commentText}</textarea>`;
+      controls.innerHTML = `<span class="save-post" data-postid="${id}" title="Save"><img src="/images/icons/save.svg" alt="Save"></span>`;
+      stars.children[0].childNodes.forEach(star => {
+        if(star.tagName == 'INPUT' && star.checked) {
+          star.removeAttribute('checked')
+          star.setAttribute('data-oldchecked', 'true');
+        }
       })
-      .then(function(myJson) {
-        console.log(JSON.stringify(myJson));
-        console.log(myJson);
-        // location.reload()
-        // return JSON.stringify(myJson);
+      updatePost();
+    });
+  });
+}
+
+function updatePost() {
+  let updatePostBtns = document.querySelectorAll('.save-post');
+  updatePostBtns.forEach((updatePostBtn, i) => {
+    updatePostBtn.addEventListener('click', () => {
+      let postId = updatePostBtn.getAttribute('data-postid'),
+      name = document.querySelectorAll('.update-name')[i],
+      comment = document.querySelectorAll('.update-comment')[i],
+      newName = name.value,
+      newComment = comment.value,
+      stars = updatePostBtn.parentElement.parentElement.parentElement.children[1],
+      newRating;
+      
+      stars.children[0].childNodes.forEach(star => {
+        if(star.tagName == 'INPUT' && star.checked) {
+          newRating = star.value;
+        }
       })
-      .catch(error => {
-        console.log(error)
-      });
+
+      if(!newName) {
+        newName = name.getAttribute('data-oldname');
+      }
+      if(!newComment) {
+        newComment = comment.getAttribute('data-oldcomment');
+      }
+      if(!newRating) {
+        stars.children[0].childNodes.forEach(star => {
+          if(star.tagName == 'INPUT' && star.getAttribute('data-oldchecked')) {
+            newRating = star.value;
+          }
+        })
+      }
+
+      let updatedReview = {
+        name: newName,
+        rating: newRating,
+        comments: newComment
+      }
+      console.log(updatedReview)
+      fetch(`${DBurl}/reviews/${postId}`, {
+        method: 'PUT',
+        body: JSON.stringify(updatedReview)
+        }
+      )
+      .then(response => response.json())
+      .then(restaurantObj => location.reload())
+      .catch(error => console.log(error))
     })
-  })
+  });
 }

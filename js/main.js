@@ -159,6 +159,7 @@ fillRestaurantsHTML = (restaurants = self.restaurants) => {
   restaurants.forEach(restaurant => {
     ul.append(createRestaurantHTML(restaurant));
   });
+  enableFavorite();
   addMarkersToMap();
 };
 
@@ -177,7 +178,7 @@ createRestaurantHTML = restaurant => {
   li.append(picture);
 
   const name = document.createElement("h1");
-  name.innerHTML = restaurant.name;
+  name.innerHTML = `${restaurant.name} <img src="/images/icons/${(() => {if(restaurant.is_favorite == 'true'){return 'unfavorite'}else{return 'favorite'}})()}.svg" alt="Favorite" class="favorite-restaurant" title="Favorite" data-id="${restaurant.id}" style="filter: ${(() => {if(restaurant.is_favorite == 'true'){return 'grayscale(0)'}else{return 'grayscale(100%)'}})()}">`;
   li.append(name);
 
   const neighborhood = document.createElement("p");

@@ -51,7 +51,7 @@
       </section>
       <!-- end restaurant -->
       <!-- Beginning reviews -->
-      <form class="from-review">
+      <form class="from-review" method="POST" action="http://penguin.linux.test:1337/reviews/">
         <div class="form-header">Leave a review</div>
         <div class="form-group">
           <label for="name">Name</label>
@@ -88,16 +88,23 @@
       <section id="reviews-container">
         <h2>Reviews</h2>
         <ul id="reviews-list">
-            <li class="reviewer">
+            <!-- <li class="reviewer">
                 <div class="reviewer-details">
-                  <div class="reviewer-name">John doe <span class="delete-post" data-postid="31" title="Delete"><img src="/images/icons/delete.svg" alt="Delete"></span></div>
+                  <div class="reviewer-with-controls">
+                    <div class="reviewer-name">John doe 
+                    </div>
+                    <div class="reviewer-controls">
+                      <span class="delete-post" data-postid="31" title="Delete"><img src="/images/icons/delete.svg" alt="Delete"></span>
+                      <span class="edit-post" data-postid="31u" title="Edit"><img src="/images/icons/edit.svg" alt="Edit"></span>
+                    </div>
+                  </div>
                   <div class="reviewer-stars">
                   <div class="rate">
                     <input type="radio" id="star5" name="rate${counter}" value="5"/>
                     <label for="star5" title="text">5 stars</label>
                     <input type="radio" id="star4" name="rate${counter}" value="4"/>
                     <label for="star4" title="text">4 stars</label>
-                    <input type="radio" id="star3" name="rate${counter}" value="3"/>
+                    <input type="radio" id="star3" name="rate${counter}" value="3" checked/>
                     <label for="star3" title="text">3 stars</label>
                     <input type="radio" id="star2" name="rate${counter}" value="2"/>
                     <label for="star2" title="text">2 stars</label>
@@ -108,7 +115,7 @@
                 </div>
                 <hr class="reviewer-hr">
                 <div class="reviewer-comment">Lorem ipsum dolor sit amet consectetur adipisicing elit. Explicabo accusantium corrupti numquam ducimus totam debitis minus, aliquam ut reiciendis obcaecati mollitia architecto provident quibusdam doloribus perspiciatis, suscipit, quaerat distinctio ratione!</div>
-              </li>
+              </li> -->
         </ul>
       </section>
     </section>
@@ -126,6 +133,7 @@
   <!-- Database helpers -->
   <script src="js/localforage.min.js"></script>
   <script src="js/dbhelper.js"></script>
+  <script src="js/shared.js"></script>
   <!-- Main javascript file -->
   <script src="js/restaurant_info.js"></script>
   <!-- Google Maps -->
