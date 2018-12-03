@@ -387,7 +387,6 @@ nav h1 a {
   all: unset;
   border: 0.5px solid #d9d9d9;
   padding: 3px 10px;
-  width: 100px;
 }
 .save-post {
   padding: 10px 0 0 10px;
@@ -425,7 +424,9 @@ nav h1 a {
 .rate {
   float: left;
   height: 46px;
+  display: flex;
   padding: 0 10px;
+  flex-direction: row-reverse;
 }
 .rate:not(:checked) > input {
   display: none;

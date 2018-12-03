@@ -156,49 +156,31 @@ resetRestaurants = restaurants => {
  */
 fillRestaurantsHTML = (restaurants = self.restaurants) => {
   const ul = document.getElementById("restaurants-list");
-  restaurants.forEach(restaurant => {
-    ul.append(createRestaurantHTML(restaurant));
-  });
+    if (window.Worker) {
+      // let li,
+      myWorker = new Worker("/js/worker.js");
+      
+      myWorker.postMessage(restaurants);
+      myWorker.onmessage = function(e) {
+        lis = e.data;
+        ul.innerHTML += lis;
+      }
+    }
+    // restaurants.forEach(restaurant => {
+    // restaurants.forEach(restaurant => {
+    // if (window.Worker) {
+    //   // let li,
+    //   myWorker = new Worker("/js/worker.js");
+
+    //   myWorker.postMessage(restaurant);
+    //   myWorker.onmessage = function(e) {
+    //     li = e.data;
+    //     ul.innerHTML += li;
+    //   }
+    // }
+  // });
   enableFavorite();
   addMarkersToMap();
-};
-
-/**
- * Create restaurant HTML.
- */
-createRestaurantHTML = restaurant => {
-  const li = document.createElement("li");
-
-  const picture = document.createElement("picture");
-  const image = document.createElement("img");
-  image.className = "restaurant-img";
-  image.setAttribute("alt", `${restaurant.name} restaurant`);
-  image.src = DBHelper.imageUrlForRestaurant(restaurant);
-  picture.append(image);
-  li.append(picture);
-
-  const name = document.createElement("h1");
-  name.innerHTML = `${restaurant.name} <img src="/images/icons/${(() => {if(restaurant.is_favorite == 'true'){return 'unfavorite'}else{return 'favorite'}})()}.svg" alt="Favorite" class="favorite-restaurant" title="Favorite" data-id="${restaurant.id}" style="filter: ${(() => {if(restaurant.is_favorite == 'true'){return 'grayscale(0)'}else{return 'grayscale(100%)'}})()}">`;
-  li.append(name);
-
-  const neighborhood = document.createElement("p");
-  neighborhood.innerHTML = restaurant.neighborhood;
-  li.append(neighborhood);
-
-  const address = document.createElement("p");
-  address.innerHTML = restaurant.address;
-  li.append(address);
-
-  const more = document.createElement("a");
-  more.setAttribute(
-    "aria-label",
-    `View Details of ${restaurant.name} restaurant`
-  );
-  more.innerHTML = "View Details";
-  more.href = DBHelper.urlForRestaurant(restaurant);
-  li.append(more);
-
-  return li;
 };
 
 /**

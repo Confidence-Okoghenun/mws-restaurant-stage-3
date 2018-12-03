@@ -2,7 +2,23 @@ let restaurant;
 var newMap;
 
 // let DBurl = 'http://localhost:1337';
-// let DBurl = 'http://penguin.linux.test:1337';
+let DBurl = 'http://penguin.linux.test:1337';
+
+/**
+ * Get a parameter by name from page URL.
+ */
+getParameterByName = (name, url) => {
+  if (!url) url = window.location.href;
+  name = name.replace(/[\[\]]/g, "\\$&");
+  const regex = new RegExp(`[?&]${name}(=([^&#]*)|&|#|$)`),
+    results = regex.exec(url);
+  if (!results) return null;
+  if (!results[2]) return "";
+  return decodeURIComponent(results[2].replace(/\+/g, " "));
+};
+
+let thisRestaurantId = getParameterByName("id");
+
 /**
  * Initialize map as soon as the page is loaded.
  */
@@ -139,7 +155,6 @@ fillRestaurantHoursHTML = (
  * Create all reviews HTML and add them to the webpage.
  */
 fillReviewsHTML = (reviews = self.restaurant.reviews) => {
-  let thisRestaurantId = getParameterByName("id");
   // Tries to load reviews form DB
   localforage.getItem(`reviews_for_restaurant${thisRestaurantId}`)
   .then(restaurant => (restaurant?renderReviews(restaurant):getReviewsFromNetwork()))
@@ -249,19 +264,6 @@ fillBreadcrumb = (restaurant = self.restaurant) => {
 };
 
 /**
- * Get a parameter by name from page URL.
- */
-getParameterByName = (name, url) => {
-  if (!url) url = window.location.href;
-  name = name.replace(/[\[\]]/g, "\\$&");
-  const regex = new RegExp(`[?&]${name}(=([^&#]*)|&|#|$)`),
-    results = regex.exec(url);
-  if (!results) return null;
-  if (!results[2]) return "";
-  return decodeURIComponent(results[2].replace(/\+/g, " "));
-};
-
-/**
  * Removes focus ring form some none interactive elements
  */
 document.addEventListener("DOMContentLoaded", () => {
@@ -311,7 +313,11 @@ submitFormBtn.addEventListener('click', (e) => {
     body: JSON.stringify(reviewObj)
   })
   .then(response =>response.json())
-  .then(myJson => location.reload())
+  .then(restaurant => {
+    localforage.setItem(`reviews_for_restaurant${thisRestaurantId}`, restaurant)
+    .then(() => console.log('Updated this restaurant reviews in DB'))
+    .catch(error => console.log(`ERROR :: ${error}`));
+    location.reload()})
   .catch(error => console.log(error));
   // location.href = thisLocation;
 })
@@ -328,7 +334,12 @@ function enableDeletePost() {
         method: 'DELETE'
       })
       .then(response => response.json())
-      .then(myJson => location.reload())
+      .then(restaurant => {
+        localforage.setItem(`reviews_for_restaurant${thisRestaurantId}`, restaurant)
+        .then(() => console.log('Deleted this restaurant reviews in DB'))
+        .catch(error => console.log(`ERROR :: ${error}`));
+        location.reload();
+      })
       .catch(error => console.log(error));
     });
   });
@@ -352,7 +363,7 @@ function enableUpdatePost() {
       name.style.width = 'fit-content';
       stars.style.pointerEvents = 'unset';
 
-      name.innerHTML = `<input type="text" name="" id="name" class="update-name" placeholder="${nameText}" data-oldname="${nameText}">`;
+      name.innerHTML = `<input type="text" name="" style="width: ${name.clientWidth}px" id="name" class="update-name" placeholder="${nameText}" data-oldname="${nameText}">`;
       comments.innerHTML = `<textarea id="comment" style="height: ${comments.clientHeight}px" class="update-comment" data-oldcomment="${commentText}">${commentText}</textarea>`;
       controls.innerHTML = `<span class="save-post" data-postid="${id}" title="Save"><img src="/images/icons/save.svg" alt="Save"></span>`;
       stars.children[0].childNodes.forEach(star => {
@@ -410,7 +421,12 @@ function updatePost() {
         }
       )
       .then(response => response.json())
-      .then(restaurantObj => location.reload())
+      .then(restaurant => {
+        localforage.setItem(`reviews_for_restaurant${thisRestaurantId}`, restaurant)
+        .then(() => console.log('Updated this restaurant reviews in DB'))
+        .catch(error => console.log(`ERROR :: ${error}`));
+        location.reload();
+      })
       .catch(error => console.log(error))
     })
   });
