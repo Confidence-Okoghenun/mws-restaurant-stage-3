@@ -3,6 +3,7 @@ const dataCacheName = "restaurantsMapData";
 const filesToCache = [
   "/",
   "/index.html",
+  "/favicon.jpg",
   "/service-worker.js",
   "/restaurant.html",
   "/restaurant.html?id=1",
@@ -17,6 +18,7 @@ const filesToCache = [
   "/restaurant.html?id=10",
   "/js/localforage.min.js",
   "/js/dbhelper.js",
+  "/js/shared.js",
   "/js/main.js",
   "/js/restaurant_info.js",
   "/css/styles.css",
@@ -29,7 +31,12 @@ const filesToCache = [
   "/img/7-s.jpg",
   "/img/8-s.jpg",
   "/img/9-s.jpg",
-  "/img/10-s.jpg"
+  "/img/10-s.jpg",
+  "/images/icons/delete.svg",
+  "/images/icons/edit.svg",
+  "/images/icons/favorite.svg",
+  "/images/icons/unfavorite.svg",
+  "/images/icons/save.svg"
 ];
 
 const restaurantsReviewsMapUrlBase = `https://api.tiles.mapbox.com`;

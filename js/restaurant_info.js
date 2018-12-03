@@ -139,12 +139,27 @@ fillRestaurantHoursHTML = (
  * Create all reviews HTML and add them to the webpage.
  */
 fillReviewsHTML = (reviews = self.restaurant.reviews) => {
-  fetch(`${DBurl}/reviews/?restaurant_id=${getParameterByName("id")}`)
-  .then(response => response.json())
-  .then(restaurant => {
-    renderReviews(restaurant)
-  })
-  .catch(error => console.log(error));
+  let thisRestaurantId = getParameterByName("id");
+  // Tries to load reviews form DB
+  localforage.getItem(`reviews_for_restaurant${thisRestaurantId}`)
+  .then(restaurant => (restaurant?renderReviews(restaurant):getReviewsFromNetwork()))
+  .catch((error) => {
+    // If it fails to load form DB then load form network and store in DB
+    getReviewsFromNetwork();
+  });
+
+  function getReviewsFromNetwork() {
+    fetch(`${DBurl}/reviews/?restaurant_id=${thisRestaurantId}`)
+    .then(response => response.json())
+    .then(restaurant => {
+
+      localforage.setItem(`reviews_for_restaurant${thisRestaurantId}`, restaurant)
+      .then(() => console.log('Saved this restaurant reviews in DB'))
+      .catch(error => console.log(`ERROR :: ${error}`));
+      renderReviews(restaurant)
+
+    }).catch(error => console.log(error));
+  }
 
   function renderReviews(allReviews) {
     if(allReviews) {
@@ -152,6 +167,7 @@ fillReviewsHTML = (reviews = self.restaurant.reviews) => {
       allReviews.forEach(review => {
         let id = review.id,
         name = review.name,
+        rand = Math.random(),
         ratings = review.rating;
         comments = review.comments,
         
@@ -167,16 +183,16 @@ fillReviewsHTML = (reviews = self.restaurant.reviews) => {
             </div>
             <div class="reviewer-stars">
             <div class="rate">
-              <input type="radio" id="star${(() => id*5)()}" name="rate${id}" value="5" ${(() => {if(ratings == 5) return 'checked'})()}/>
-              <label for="star${(() => id*5)()}" title="text">5 stars</label>
-              <input type="radio" id="star${(() => id*4)()}" name="rate${id}" value="4" ${(() => {if(ratings == 4) return 'checked'})()}/>
-              <label for="star${(() => id*4)()}" title="text">4 stars</label>
-              <input type="radio" id="star${(() => id*3)()}" name="rate${id}" value="3" ${(() => {if(ratings == 3) return 'checked'})()}/>
-              <label for="star${(() => id*3)()}" title="text">3 stars</label>
-              <input type="radio" id="star${(() => id*2)()}" name="rate${id}" value="2" ${(() => {if(ratings == 2) return 'checked'})()}/>
-              <label for="star${(() => id*2)()}" title="text">2 stars</label>
-              <input type="radio" id="star${(() => id*1)()}" name="rate${id}" value="1" ${(() => {if(ratings == 1) return 'checked'})()}/>
-              <label for="star${(() => id*1)()}" title="text">1 star</label>
+              <input type="radio" id="star${(() => (rand*5)-id)()}" name="rate${id}" value="5" ${(() => {if(ratings == 5) return 'checked'})()}/>
+              <label for="star${(() => (rand*5)-id)()}" title="text">5 stars</label>
+              <input type="radio" id="star${(() => (rand*4)-id)()}" name="rate${id}" value="4" ${(() => {if(ratings == 4) return 'checked'})()}/>
+              <label for="star${(() => (rand*4)-id)()}" title="text">4 stars</label>
+              <input type="radio" id="star${(() => (rand*3)-id)()}" name="rate${id}" value="3" ${(() => {if(ratings == 3) return 'checked'})()}/>
+              <label for="star${(() => (rand*3)-id)()}" title="text">3 stars</label>
+              <input type="radio" id="star${(() => (rand*2)-id)()}" name="rate${id}" value="2" ${(() => {if(ratings == 2) return 'checked'})()}/>
+              <label for="star${(() => (rand*2)-id)()}" title="text">2 stars</label>
+              <input type="radio" id="star${(() => (rand*1)-id)()}" name="rate${id}" value="1" ${(() => {if(ratings == 1) return 'checked'})()}/>
+              <label for="star${(() => (rand*1)-id)()}" title="text">1 star</label>
             </div>
           </div>
           </div>

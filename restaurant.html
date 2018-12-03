@@ -7,6 +7,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="theme-color" content="#252831"/>
   <link rel="manifest" href="manifest.json">
+  <link rel="shortcut icon" type="image/png" href="/favicon.jpg"/>
   <!-- Normalize.css for better cross-browser consistency -->
   <link rel="stylesheet" src="//normalize-css.googlecode.com/svn/trunk/normalize.css" />
   <!-- Main CSS file -->
@@ -65,19 +66,18 @@
           <label>Ratings</label>
           <div class="form-stars">
             <div class="rate">
-              <label class="required-hide">
-                <input type="radio" name="rate" required/>
-              </label>
-              <input type="radio" id="star5" name="rate" value="5"/>
-              <label for="star5" title="5 stars">5 stars</label>
-              <input type="radio" id="star4" name="rate" value="4"/>
-              <label for="star4" title="4 stars">4 stars</label>
-              <input type="radio" id="star3" name="rate" value="3"/>
-              <label for="star3" title="3 stars">3 stars</label>
-              <input type="radio" id="star2" name="rate" value="2"/>
-              <label for="star2" title="2 stars">2 stars</label>
-              <input type="radio" id="star1" name="rate" value="1"/>
-              <label for="star1" title="1 stars">1 star</label>
+              <input class="required-hide" type="radio" name="rate" id="star00" required/>
+              <label class="required-hide" for="star00">0 stars</label>
+              <input type="radio" id="star05" name="rate" value="5"/>
+              <label for="star05" title="5 stars">5 stars</label>
+              <input type="radio" id="star04" name="rate" value="4"/>
+              <label for="star04" title="4 stars">4 stars</label>
+              <input type="radio" id="star03" name="rate" value="3"/>
+              <label for="star03" title="3 stars">3 stars</label>
+              <input type="radio" id="star02" name="rate" value="2"/>
+              <label for="star02" title="2 stars">2 stars</label>
+              <input type="radio" id="star01" name="rate" value="1"/>
+              <label for="star01" title="1 stars">1 star</label>
             </div>
           </div>
         </div>
@@ -87,36 +87,7 @@
       </form>
       <section id="reviews-container">
         <h2>Reviews</h2>
-        <ul id="reviews-list">
-            <!-- <li class="reviewer">
-                <div class="reviewer-details">
-                  <div class="reviewer-with-controls">
-                    <div class="reviewer-name">John doe 
-                    </div>
-                    <div class="reviewer-controls">
-                      <span class="delete-post" data-postid="31" title="Delete"><img src="/images/icons/delete.svg" alt="Delete"></span>
-                      <span class="edit-post" data-postid="31u" title="Edit"><img src="/images/icons/edit.svg" alt="Edit"></span>
-                    </div>
-                  </div>
-                  <div class="reviewer-stars">
-                  <div class="rate">
-                    <input type="radio" id="star5" name="rate${counter}" value="5"/>
-                    <label for="star5" title="text">5 stars</label>
-                    <input type="radio" id="star4" name="rate${counter}" value="4"/>
-                    <label for="star4" title="text">4 stars</label>
-                    <input type="radio" id="star3" name="rate${counter}" value="3" checked/>
-                    <label for="star3" title="text">3 stars</label>
-                    <input type="radio" id="star2" name="rate${counter}" value="2"/>
-                    <label for="star2" title="text">2 stars</label>
-                    <input type="radio" id="star1" name="rate${counter}" value="1"/>
-                    <label for="star1" title="text">1 star</label>
-                  </div>
-                </div>
-                </div>
-                <hr class="reviewer-hr">
-                <div class="reviewer-comment">Lorem ipsum dolor sit amet consectetur adipisicing elit. Explicabo accusantium corrupti numquam ducimus totam debitis minus, aliquam ut reiciendis obcaecati mollitia architecto provident quibusdam doloribus perspiciatis, suscipit, quaerat distinctio ratione!</div>
-              </li> -->
-        </ul>
+        <ul id="reviews-list"></ul>
       </section>
     </section>
     <!-- End reviews -->
@@ -133,7 +104,6 @@
   <!-- Database helpers -->
   <script src="js/localforage.min.js"></script>
   <script src="js/dbhelper.js"></script>
-  <script src="js/shared.js"></script>
   <!-- Main javascript file -->
   <script src="js/restaurant_info.js"></script>
   <!-- Google Maps -->
