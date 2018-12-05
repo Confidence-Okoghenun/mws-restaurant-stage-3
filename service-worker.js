@@ -36,7 +36,8 @@ const filesToCache = [
   "/images/icons/edit.svg",
   "/images/icons/favorite.svg",
   "/images/icons/unfavorite.svg",
-  "/images/icons/save.svg"
+  "/images/icons/save.svg",
+  "/images/icons/no-network.svg"
 ];
 
 const restaurantsReviewsMapUrlBase = `https://api.tiles.mapbox.com`;

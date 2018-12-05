@@ -52,11 +52,11 @@
       </section>
       <!-- end restaurant -->
       <!-- Beginning reviews -->
-      <form class="from-review" method="POST" action="http://penguin.linux.test:1337/reviews/">
+      <form class="from-review">
         <div class="form-header">Leave a review</div>
         <div class="form-group">
           <label for="name">Name</label>
-          <input type="text" name="" id="name" class="form-name" required>
+          <input type="text" name="" id="name" class="form-name" maxlength="10" required>
         </div>
         <div class="form-group">
           <label for="comment">Comment</label>
@@ -85,7 +85,8 @@
         </div>
         <div class="form-group">
         <button class="form-submit">Submit</button>
-        </div>
+        <!-- <div class="form-error hide">Complete all form fields!</div> -->
+      </div>
       </form>
       <section id="reviews-container">
         <h2>Reviews</h2>
@@ -93,6 +94,16 @@
       </section>
     </section>
     <!-- End reviews -->
+    <div class="popup-container hide">
+      <div class="popup-card">
+        <div class="popup-body">
+          <img class="offline-image" src="/images/icons/no-network.svg" alt="Offline Icon"><span class="offline-text">You're offline! Your review will be uploaded when you're back online</span>
+        </div>
+        <div class="popup-footer">
+          <button class="popup-button">Continue</button>
+        </div>
+      </div>
+    </div>
   </main>
   <!-- End main -->
 

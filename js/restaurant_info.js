@@ -1,9 +1,15 @@
-let restaurant;
 var newMap;
 
-// let DBurl = 'http://localhost:1337';
-let DBurl = 'http://penguin.linux.test:1337';
-
+let restaurant,
+deleteReviewsArr = [],
+updateReviewsArr = [],
+offlineReviewsArr = [],
+// DBurl = 'http://localhost:1337',
+DBurl = 'http://penguin.linux.test:1337',
+// formError = document.querySelector('.form-error'),
+formReview = document.querySelector('.from-review'),
+offlineText = document.querySelector('.offline-text'),
+popupContainer = document.querySelector('.popup-container');
 /**
  * Get a parameter by name from page URL.
  */
@@ -18,6 +24,10 @@ getParameterByName = (name, url) => {
 };
 
 let thisRestaurantId = getParameterByName("id");
+
+document.querySelector('.popup-button').addEventListener('click', () => {
+  popupContainer.classList.add('hide');
+})
 
 /**
  * Initialize map as soon as the page is loaded.
@@ -296,10 +306,13 @@ document.addEventListener("DOMContentLoaded", () => {
 
 let submitFormBtn = document.querySelector('.form-submit');
 submitFormBtn.addEventListener('click', (e) => {
-  // e.preventDefault();
- let reviewer_name =  document.querySelector('.form-name').value,
- comment_text = document.querySelector('.form-comment').value,
- rating = document.querySelector('.form-stars input:checked').value;
+  let rating,
+  reviewer_name =  document.querySelector('.form-name').value,
+  comment_text = document.querySelector('.form-comment').value;
+  
+  if(document.querySelector('.form-stars input:checked')) {
+    rating = document.querySelector('.form-stars input:checked').value;
+  }
   // let thisLocation = location.href;
   let reviewObj = {
     restaurant_id: getParameterByName("id"),
@@ -308,19 +321,61 @@ submitFormBtn.addEventListener('click', (e) => {
     comments: comment_text
   }
   console.log(reviewObj)
+  if(!reviewer_name || !comment_text || !rating) {
+    // formError.classList.remove('hide');
+    // setTimeout(() => {
+      //   formError.classList.add('hide');
+      // }, 2000)
+  } else {
+    e.preventDefault();
+    postReviews('online', reviewObj);
+  }
+  // location.href = thisLocation;
+})
+
+function postReviews(networkStatus, reviewObj) {
   fetch(`${DBurl}/reviews/`, {
     method: 'POST',
     body: JSON.stringify(reviewObj)
   })
-  .then(response =>response.json())
+  .then(response => response.json())
   .then(restaurant => {
     localforage.setItem(`reviews_for_restaurant${thisRestaurantId}`, restaurant)
     .then(() => console.log('Updated this restaurant reviews in DB'))
     .catch(error => console.log(`ERROR :: ${error}`));
-    location.reload()})
-  .catch(error => console.log(error));
-  // location.href = thisLocation;
-})
+    if(networkStatus == 'online') {
+      location.reload();
+    }
+  })
+  .catch(error => {
+    console.log(error)
+    if (!navigator.onLine) {
+      formReview.reset();
+      offlineText.innerHTML = `You're offline! Your review will be uploaded when you're back online`;
+      popupContainer.classList.remove('hide');
+      offlineReviewsArr.push(reviewObj);
+      localStorage.setItem('offlineReviews', JSON.stringify(offlineReviewsArr));
+      postReviewsWhenBackOnline();
+    }
+  });
+}
+
+function postReviewsWhenBackOnline() {
+  window.addEventListener('online', () => {
+    let offlineReviews = localStorage.getItem('offlineReviews');
+    if(offlineReviews) {
+      offlineReviews = JSON.parse(offlineReviews);
+      offlineReviews.forEach((offlineReview, i) => {
+        console.log(`posted review ${i}`)
+        postReviews('offline', offlineReview)
+      });
+      localStorage.removeItem('offlineReviews');
+      setTimeout(() => {
+        location.reload();
+      }, 3000);
+    }
+  });
+}
 /**
  * Enables post deletion
  */
@@ -329,19 +384,52 @@ function enableDeletePost() {
   deletePostBtns.forEach(deletePostBtn => {
     deletePostBtn.addEventListener('click', () => {
       console.log('clicked')
-      let postId = deletePostBtn.getAttribute('data-postid')
-      fetch(`${DBurl}/reviews/${postId}`, {
-        method: 'DELETE'
-      })
-      .then(response => response.json())
-      .then(restaurant => {
-        localforage.setItem(`reviews_for_restaurant${thisRestaurantId}`, restaurant)
-        .then(() => console.log('Deleted this restaurant reviews in DB'))
-        .catch(error => console.log(`ERROR :: ${error}`));
-        location.reload();
-      })
-      .catch(error => console.log(error));
+      let postId = deletePostBtn.getAttribute('data-postid');
+      deleteReviews('online', postId);
     });
+  });
+}
+
+function deleteReviews(networkStatus, postId) {
+  fetch(`${DBurl}/reviews/${postId}`, {
+    method: 'DELETE'
+  })
+  .then(response => response.json())
+  .then(restaurant => {
+    localforage.setItem(`reviews_for_restaurant${thisRestaurantId}`, restaurant)
+    .then(() => console.log('Deleted this restaurant reviews in DB'))
+    .catch(error => console.log(`ERROR :: ${error}`));
+    if(networkStatus == 'online') {
+      location.reload();
+    }
+  })
+  .catch(error => {
+    console.log(error);
+    if (!navigator.onLine) {
+      document.querySelector(`[data-postid="${postId}"]`).parentElement.parentElement.parentElement.parentElement.classList.add('hide');
+      offlineText.innerHTML = `You're offline! The review will be deleted when you're back online`;
+      popupContainer.classList.remove('hide');
+      deleteReviewsArr.push(postId);
+      localStorage.setItem('deleteReviewIds', JSON.stringify(deleteReviewsArr));
+      deleteReviewsWhenBackOnline();
+    }
+  });
+}
+
+function deleteReviewsWhenBackOnline() {
+  window.addEventListener('online', () => {
+    let deleteReviewIds = localStorage.getItem('deleteReviewIds');
+    if(deleteReviewIds) {
+      deleteReviewIds = JSON.parse(deleteReviewIds);
+      deleteReviewIds.forEach((deleteReviewId, i) => {
+        console.log(`deleted review ${i}`)
+        deleteReviews('offline', deleteReviewId)
+      });
+      localStorage.removeItem('deleteReviewIds');
+      setTimeout(() => {
+        location.reload();
+      }, 3000);
+    }
   });
 }
 /**
@@ -363,7 +451,7 @@ function enableUpdatePost() {
       name.style.width = 'fit-content';
       stars.style.pointerEvents = 'unset';
 
-      name.innerHTML = `<input type="text" name="" style="width: ${name.clientWidth}px" id="name" class="update-name" placeholder="${nameText}" data-oldname="${nameText}">`;
+      name.innerHTML = `<input type="text" name="" maxlength="10" style="width: ${name.clientWidth}px" id="name" class="update-name" placeholder="${nameText}" data-oldname="${nameText}">`;
       comments.innerHTML = `<textarea id="comment" style="height: ${comments.clientHeight}px" class="update-comment" data-oldcomment="${commentText}">${commentText}</textarea>`;
       controls.innerHTML = `<span class="save-post" data-postid="${id}" title="Save"><img src="/images/icons/save.svg" alt="Save"></span>`;
       stars.children[0].childNodes.forEach(star => {
@@ -412,22 +500,55 @@ function updatePost() {
       let updatedReview = {
         name: newName,
         rating: newRating,
-        comments: newComment
+        comments: newComment,
+        id: postId
       }
       console.log(updatedReview)
-      fetch(`${DBurl}/reviews/${postId}`, {
-        method: 'PUT',
-        body: JSON.stringify(updatedReview)
-        }
-      )
-      .then(response => response.json())
-      .then(restaurant => {
-        localforage.setItem(`reviews_for_restaurant${thisRestaurantId}`, restaurant)
-        .then(() => console.log('Updated this restaurant reviews in DB'))
-        .catch(error => console.log(`ERROR :: ${error}`));
-        location.reload();
-      })
-      .catch(error => console.log(error))
+      updateReview('online', updatedReview, postId);
     })
+  });
+}
+
+function updateReview(networkStatus, updatedReview, postId) {
+  fetch(`${DBurl}/reviews/${postId}`, {
+    method: 'PUT',
+    body: JSON.stringify(updatedReview)
+    }
+  )
+  .then(response => response.json())
+  .then(restaurant => {
+    localforage.setItem(`reviews_for_restaurant${thisRestaurantId}`, restaurant)
+    .then(() => console.log('Updated this restaurant reviews in DB'))
+    .catch(error => console.log(`ERROR :: ${error}`));
+    if(networkStatus == 'online') {
+      location.reload();
+    }
+  })
+  .catch(error => {
+    console.log(error)
+    if (!navigator.onLine) {
+      offlineText.innerHTML = `You're offline! The review will be updated when you're back online`;
+      popupContainer.classList.remove('hide');
+      updateReviewsArr.push(updatedReview);
+      localStorage.setItem('updatedReviewEdits', JSON.stringify(updateReviewsArr));
+      updateReviewsWhenBackOnline();
+    }
+  })
+}
+
+function updateReviewsWhenBackOnline() {
+  window.addEventListener('online', () => {
+    let updatedReviewEdits = localStorage.getItem('updatedReviewEdits');
+    if(updatedReviewEdits) {
+      updatedReviewEdits = JSON.parse(updatedReviewEdits);
+      updatedReviewEdits.forEach((updatedReviewEdits, i) => {
+        console.log(`updated review ${i}`)
+        updateReview('offline', updatedReviewEdits, updatedReviewEdits.id)
+      });
+      localStorage.removeItem('updatedReviewEdits');
+      setTimeout(() => {
+        location.reload();
+      }, 3000);
+    }
   });
 }
