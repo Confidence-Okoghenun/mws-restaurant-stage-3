@@ -1,8 +1,8 @@
 /**
  * Base url for DataBase.
  */
-// let  dbUrl = 'http://localhost:1337/restaurants';
-let  dbUrl = 'http://penguin.linux.test:1337/restaurants';
+let  dbUrl = 'http://localhost:1337/restaurants';
+// let  dbUrl = 'http://penguin.linux.test:1337/restaurants';
 /**
  * Register Service Worker.
  */
